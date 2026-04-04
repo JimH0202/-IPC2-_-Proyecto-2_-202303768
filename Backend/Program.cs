@@ -5,6 +5,8 @@ var lector = new XMLReader();
 lector.CargarXMLs(rutas);
 var decoder = new DecoderService();
 var simulator = new SimulatorService();
+var optimizer = new OptimizerService();
+var writer = new XMLWriter();
 
 Console.WriteLine($"Drones leídos: {lector.listaDrones.Contar()}");
 Console.WriteLine($"Sistemas leídos: {lector.listaSistemas.Contar()}");
@@ -29,6 +31,13 @@ foreach (var mensaje in lector.listaMensajes.ObtenerTodos())
 
         int tiempo = simulator.SimularTiempo(mensaje);
         Console.WriteLine($"Tiempo simulado: {tiempo}");
+
+        int tiempoOptimo = optimizer.SimularTiempoReal(mensaje);
+        Console.WriteLine($"Tiempo óptimo: {tiempoOptimo}");
+
+        var timeline = optimizer.SimularConTimeline(mensaje);
+        writer.GenerarXML($"salida_{mensaje.Nombre}.xml", mensaje, sistema, tiempoOptimo, texto, timeline);
+        Console.WriteLine($"XML generado: salida_{mensaje.Nombre}.xml");
     }
     else
     {

@@ -1,0 +1,28 @@
+<respuesta>
+  <listaMensajes>
+    <mensaje nombre="M1">
+      <sistemaDrones>Sistema1</sistemaDrones>
+      <tiempoOptimo>2</tiempoOptimo>
+      <mensajeRecibido>DA</mensajeRecibido>
+      <instrucciones>
+        <tiempo valor="3">
+          <acciones>
+            <dron nombre="Drone2">Emitir</dron>
+          </acciones>
+        </tiempo>
+        <tiempo valor="2">
+          <acciones>
+            <dron nombre="Drone1">Emitir</dron>
+            <dron nombre="Drone2">Subir</dron>
+          </acciones>
+        </tiempo>
+        <tiempo valor="1">
+          <acciones>
+            <dron nombre="Drone2">Subir</dron>
+            <dron nombre="Drone1">Subir</dron>
+          </acciones>
+        </tiempo>
+      </instrucciones>
+    </mensaje>
+  </listaMensajes>
+</respuesta>

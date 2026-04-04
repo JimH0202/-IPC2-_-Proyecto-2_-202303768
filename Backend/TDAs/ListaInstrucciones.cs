@@ -35,5 +35,7 @@ namespace Backend.TDAs
             }
             return count;
         }
+
+        public Nodo? GetCabeza() => cabeza;
     }
 }
