@@ -1,4 +1,5 @@
 using System.Xml;
+using System.IO;
 using Backend.Models;
 using Backend.TDAs;
 
@@ -12,6 +13,9 @@ namespace Backend.Services
 
         public void CargarXML(string ruta)
         {
+            if (!File.Exists(ruta))
+                return;
+
             XmlDocument doc = new XmlDocument();
             doc.Load(ruta);
 
@@ -20,42 +24,85 @@ namespace Backend.Services
             LeerMensajes(doc);
         }
 
+        public void CargarXMLs(IEnumerable<string> rutas)
+        {
+            foreach (var ruta in rutas)
+            {
+                CargarXML(ruta);
+            }
+        }
+
         private void LeerDrones(XmlDocument doc)
         {
-            XmlNodeList drones = doc.SelectNodes("//listaDrones/dron");
+            XmlNodeList? drones = doc.SelectNodes("//listaDrones/dron");
+            if (drones == null)
+                return;
 
             foreach (XmlNode dron in drones)
             {
                 string nombre = dron.InnerText.Trim();
+                if (string.IsNullOrEmpty(nombre))
+                    continue;
+
                 listaDrones.Insertar(new Dron(nombre));
             }
         }
 
         private void LeerSistemas(XmlDocument doc)
         {
-            XmlNodeList sistemas = doc.SelectNodes("//sistemaDrones");
+            XmlNodeList? sistemas = doc.SelectNodes("//listaSistemasDrones/sistemaDrones") ?? doc.SelectNodes("//sistemaDrones");
+            if (sistemas == null)
+                return;
 
             foreach (XmlNode sistema in sistemas)
             {
-                string nombre = sistema.Attributes["nombre"].Value;
+                string nombre = sistema.Attributes?["nombre"]?.Value?.Trim() ?? string.Empty;
+                if (string.IsNullOrEmpty(nombre))
+                    continue;
+
                 SistemaDrones s = new SistemaDrones(nombre);
 
-                s.AlturaMaxima = int.Parse(sistema["alturaMaxima"].InnerText);
-                s.CantidadDrones = int.Parse(sistema["cantidadDrones"].InnerText);
+                var alturaMaximaNode = sistema.SelectSingleNode("./alturaMaxima");
+                var cantidadDronesNode = sistema.SelectSingleNode("./cantidadDrones");
 
-                XmlNodeList contenidos = sistema.SelectNodes(".//contenido");
+                if (alturaMaximaNode == null || cantidadDronesNode == null)
+                    continue;
+
+                if (!int.TryParse(alturaMaximaNode.InnerText.Trim(), out int alturaMaxima))
+                    continue;
+
+                if (!int.TryParse(cantidadDronesNode.InnerText.Trim(), out int cantidadDrones))
+                    continue;
+
+                s.AlturaMaxima = alturaMaxima;
+                s.CantidadDrones = cantidadDrones;
+
+                XmlNodeList? contenidos = sistema.SelectNodes("./contenido");
+                if (contenidos == null)
+                {
+                    listaSistemas.Insertar(s);
+                    continue;
+                }
 
                 foreach (XmlNode contenido in contenidos)
                 {
-                    string dron = contenido["dron"].InnerText;
+                    var dronNode = contenido.SelectSingleNode("./dron");
+                    if (dronNode == null)
+                        continue;
 
-                    XmlNodeList alturas = contenido.SelectNodes(".//altura");
+                    string dron = dronNode.InnerText.Trim();
+                    XmlNodeList? alturas = contenido.SelectNodes("./alturas/altura") ?? contenido.SelectNodes("./altura");
+                    if (alturas == null)
+                        continue;
 
                     foreach (XmlNode altura in alturas)
                     {
-                        int valor = int.Parse(altura.Attributes["valor"].Value);
-                        string letra = altura.InnerText;
+                        int valor = 0;
+                        var valorAttr = altura.Attributes?["valor"]?.Value;
+                        if (string.IsNullOrEmpty(valorAttr) || !int.TryParse(valorAttr.Trim(), out valor))
+                            continue;
 
+                        string letra = altura.InnerText.Trim();
                         s.Tabla.Insertar(new AlturaLetra(dron, valor, letra));
                     }
                 }
@@ -66,21 +113,36 @@ namespace Backend.Services
 
         private void LeerMensajes(XmlDocument doc)
         {
-            XmlNodeList mensajes = doc.SelectNodes("//Mensaje");
+            XmlNodeList? mensajes = doc.SelectNodes("//listaMensajes/Mensaje") ?? doc.SelectNodes("//Mensaje");
+            if (mensajes == null)
+                return;
 
             foreach (XmlNode mensaje in mensajes)
             {
-                string nombre = mensaje.Attributes["nombre"].Value;
-                string sistema = mensaje["sistemaDrones"].InnerText;
+                string nombre = mensaje.Attributes?["nombre"]?.Value?.Trim() ?? string.Empty;
+                var sistemaNode = mensaje.SelectSingleNode("./sistemaDrones");
+                string sistema = sistemaNode?.InnerText.Trim() ?? string.Empty;
+
+                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(sistema))
+                    continue;
 
                 Mensaje m = new Mensaje(nombre, sistema);
 
-                XmlNodeList instrucciones = mensaje.SelectNodes(".//instruccion");
+                XmlNodeList? instrucciones = mensaje.SelectNodes("./instrucciones/instruccion") ?? mensaje.SelectNodes(".//instruccion");
+                if (instrucciones == null)
+                {
+                    listaMensajes.Insertar(m);
+                    continue;
+                }
 
                 foreach (XmlNode inst in instrucciones)
                 {
-                    string dron = inst.Attributes["dron"].Value;
-                    int altura = int.Parse(inst.InnerText);
+                    string dron = inst.Attributes?["dron"]?.Value?.Trim() ?? string.Empty;
+                    if (string.IsNullOrEmpty(dron))
+                        continue;
+
+                    if (!int.TryParse(inst.InnerText.Trim(), out int altura))
+                        continue;
 
                     m.Instrucciones.Insertar(new Instruccion(dron, altura));
                 }

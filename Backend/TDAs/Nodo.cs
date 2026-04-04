@@ -3,7 +3,7 @@ namespace Backend.TDAs
     public class Nodo
     {
         public object Dato;
-        public Nodo Siguiente;
+        public Nodo? Siguiente;
 
         public Nodo(object dato)
         {

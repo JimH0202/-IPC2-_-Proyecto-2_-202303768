@@ -17,5 +17,10 @@ namespace Backend.Models
             Drones = new ListaDrones();
             Tabla = new ListaAlturas();
         }
+
+        public string? ObtenerLetra(string dron, int altura)
+        {
+            return Tabla.BuscarLetra(dron, altura);
+        }
     }
 }
