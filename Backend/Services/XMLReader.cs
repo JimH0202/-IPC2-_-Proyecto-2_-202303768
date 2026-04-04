@@ -41,7 +41,7 @@ namespace Backend.Services
             foreach (XmlNode dron in drones)
             {
                 string nombre = dron.InnerText.Trim();
-                if (string.IsNullOrEmpty(nombre))
+                if (string.IsNullOrEmpty(nombre) || listaDrones.Contiene(nombre))
                     continue;
 
                 listaDrones.Insertar(new Dron(nombre));
@@ -60,7 +60,7 @@ namespace Backend.Services
                 if (string.IsNullOrEmpty(nombre))
                     continue;
 
-                SistemaDrones s = new SistemaDrones(nombre);
+                SistemaDrones? s = listaSistemas.ObtenerPorNombre(nombre) ?? new SistemaDrones(nombre);
 
                 var alturaMaximaNode = sistema.SelectSingleNode("./alturaMaxima");
                 var cantidadDronesNode = sistema.SelectSingleNode("./cantidadDrones");
@@ -74,13 +74,14 @@ namespace Backend.Services
                 if (!int.TryParse(cantidadDronesNode.InnerText.Trim(), out int cantidadDrones))
                     continue;
 
-                s.AlturaMaxima = alturaMaxima;
-                s.CantidadDrones = cantidadDrones;
+                s.AlturaMaxima = Math.Max(s.AlturaMaxima, alturaMaxima);
+                s.CantidadDrones = Math.Max(s.CantidadDrones, cantidadDrones);
 
                 XmlNodeList? contenidos = sistema.SelectNodes("./contenido");
                 if (contenidos == null)
                 {
-                    listaSistemas.Insertar(s);
+                    if (listaSistemas.ObtenerPorNombre(nombre) == null)
+                        listaSistemas.Insertar(s);
                     continue;
                 }
 
@@ -91,6 +92,9 @@ namespace Backend.Services
                         continue;
 
                     string dron = dronNode.InnerText.Trim();
+                    if (!string.IsNullOrEmpty(dron) && !s.Drones.Contiene(dron))
+                        s.Drones.Insertar(new Dron(dron));
+
                     XmlNodeList? alturas = contenido.SelectNodes("./alturas/altura") ?? contenido.SelectNodes("./altura");
                     if (alturas == null)
                         continue;
@@ -103,11 +107,15 @@ namespace Backend.Services
                             continue;
 
                         string letra = altura.InnerText.Trim();
+                        if (s.Tabla.BuscarLetra(dron, valor) != null)
+                            continue;
+
                         s.Tabla.Insertar(new AlturaLetra(dron, valor, letra));
                     }
                 }
 
-                listaSistemas.Insertar(s);
+                if (listaSistemas.ObtenerPorNombre(nombre) == null)
+                    listaSistemas.Insertar(s);
             }
         }
 
@@ -123,7 +131,7 @@ namespace Backend.Services
                 var sistemaNode = mensaje.SelectSingleNode("./sistemaDrones");
                 string sistema = sistemaNode?.InnerText.Trim() ?? string.Empty;
 
-                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(sistema))
+                if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(sistema) || listaMensajes.Contiene(nombre))
                     continue;
 
                 Mensaje m = new Mensaje(nombre, sistema);

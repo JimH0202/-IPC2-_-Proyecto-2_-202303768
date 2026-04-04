@@ -24,6 +24,19 @@ namespace Backend.TDAs
             }
         }
 
+        public SistemaDrones? ObtenerPorNombre(string nombre)
+        {
+            Nodo? actual = cabeza;
+            while (actual != null)
+            {
+                var sistema = (SistemaDrones)actual.Dato;
+                if (sistema.Nombre == nombre)
+                    return sistema;
+                actual = actual.Siguiente;
+            }
+            return null;
+        }
+
         public int Contar()
         {
             int count = 0;

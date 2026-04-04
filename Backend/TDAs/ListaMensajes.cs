@@ -24,6 +24,18 @@ namespace Backend.TDAs
             }
         }
 
+        public bool Contiene(string nombre)
+        {
+            Nodo? actual = cabeza;
+            while (actual != null)
+            {
+                if (((Mensaje)actual.Dato).Nombre == nombre)
+                    return true;
+                actual = actual.Siguiente;
+            }
+            return false;
+        }
+
         public int Contar()
         {
             int count = 0;
