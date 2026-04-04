@@ -4,6 +4,7 @@ var rutas = args.Length > 0 ? args : new[] { "entrada.xml" };
 var lector = new XMLReader();
 lector.CargarXMLs(rutas);
 var decoder = new DecoderService();
+var simulator = new SimulatorService();
 
 Console.WriteLine($"Drones leídos: {lector.listaDrones.Contar()}");
 Console.WriteLine($"Sistemas leídos: {lector.listaSistemas.Contar()}");
@@ -25,6 +26,9 @@ foreach (var mensaje in lector.listaMensajes.ObtenerTodos())
     {
         var texto = decoder.DecodificarMensaje(mensaje, sistema);
         Console.WriteLine($"Mensaje {mensaje.Nombre}: {texto}");
+
+        int tiempo = simulator.SimularTiempo(mensaje);
+        Console.WriteLine($"Tiempo simulado: {tiempo}");
     }
     else
     {
