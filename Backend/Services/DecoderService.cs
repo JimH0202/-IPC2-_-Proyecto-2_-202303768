@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Backend.Models;
 
 namespace Backend.Services
@@ -17,5 +17,6 @@ namespace Backend.Services
 
             return resultado.ToString();
         }
+
     }
 }

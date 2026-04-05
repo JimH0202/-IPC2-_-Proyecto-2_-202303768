@@ -1,46 +1,24 @@
 using Backend.Services;
 
-var rutas = args.Length > 0 ? args : new[] { "entrada.xml" };
-var lector = new XMLReader();
-lector.CargarXMLs(rutas);
-var decoder = new DecoderService();
-var simulator = new SimulatorService();
-var optimizer = new OptimizerService();
-var writer = new XMLWriter();
+var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine($"Drones leídos: {lector.listaDrones.Contar()}");
-Console.WriteLine($"Sistemas leídos: {lector.listaSistemas.Contar()}");
-Console.WriteLine($"Mensajes leídos: {lector.listaMensajes.Contar()}");
-
-foreach (var sistema in lector.listaSistemas.ObtenerTodos())
+// Agregar servicios
+builder.Services.AddControllers();
+builder.Services.AddCors(options =>
 {
-    Console.WriteLine($"Sistema: {sistema.Nombre} (drones={sistema.CantidadDrones}, alturaMax={sistema.AlturaMaxima})");
-    foreach (var alturaLetra in sistema.Tabla.ObtenerTodos())
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        Console.WriteLine($"  {alturaLetra.Dron}@{alturaLetra.Altura} => {alturaLetra.Letra}");
-    }
-}
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-foreach (var mensaje in lector.listaMensajes.ObtenerTodos())
-{
-    var sistema = lector.listaSistemas.ObtenerPorNombre(mensaje.SistemaDrones);
-    if (sistema != null)
-    {
-        var texto = decoder.DecodificarMensaje(mensaje, sistema);
-        Console.WriteLine($"Mensaje {mensaje.Nombre}: {texto}");
+var app = builder.Build();
 
-        int tiempo = simulator.SimularTiempo(mensaje);
-        Console.WriteLine($"Tiempo simulado: {tiempo}");
+app.UseRouting();
+app.UseCors("AllowFrontend");
+app.MapControllers();
 
-        int tiempoOptimo = optimizer.SimularTiempoReal(mensaje);
-        Console.WriteLine($"Tiempo óptimo: {tiempoOptimo}");
-
-        var timeline = optimizer.SimularConTimeline(mensaje);
-        writer.GenerarXML($"salida_{mensaje.Nombre}.xml", mensaje, sistema, tiempoOptimo, texto, timeline);
-        Console.WriteLine($"XML generado: salida_{mensaje.Nombre}.xml");
-    }
-    else
-    {
-        Console.WriteLine($"Mensaje {mensaje.Nombre}: (sistema no encontrado)");
-    }
-}
+Console.WriteLine("🚀 Backend API iniciado en http://localhost:5000");
+app.Run("http://localhost:5000");
