@@ -78,10 +78,19 @@ namespace Backend.Controllers
             var dir = new DirectoryInfo(AppContext.BaseDirectory);
             while (dir != null && dir.FullName != dir.Root.FullName)
             {
+                if (System.IO.File.Exists(Path.Combine(dir.FullName, "Backend.csproj")))
+                    return dir.FullName;
+                dir = dir.Parent;
+            }
+
+            dir = new DirectoryInfo(AppContext.BaseDirectory);
+            while (dir != null && dir.FullName != dir.Root.FullName)
+            {
                 if (Directory.Exists(Path.Combine(dir.FullName, "Data")) || Directory.Exists(Path.Combine(dir.FullName, "Graphviz")))
                     return dir.FullName;
                 dir = dir.Parent;
             }
+
             return AppContext.BaseDirectory;
         }
 
@@ -114,10 +123,14 @@ namespace Backend.Controllers
         {
             try
             {
+                var dotExe = FindDotExecutable();
+                if (string.IsNullOrEmpty(dotExe))
+                    return null;
+
                 var svgPath = Path.Combine(EnsureProjectSubfolder("Graphviz"), svgFileName);
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = "dot",
+                    FileName = dotExe,
                     Arguments = $"-Tsvg -o \"{svgPath}\" \"{dotPath}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -139,6 +152,45 @@ namespace Backend.Controllers
             {
                 return null;
             }
+        }
+
+        private static string? FindDotExecutable()
+        {
+            try
+            {
+                var whereInfo = new ProcessStartInfo
+                {
+                    FileName = "where",
+                    Arguments = "dot",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var whereProcess = Process.Start(whereInfo);
+                if (whereProcess != null)
+                {
+                    whereProcess.WaitForExit(5000);
+                    if (whereProcess.ExitCode == 0)
+                    {
+                        var path = whereProcess.StandardOutput.ReadLine()?.Trim();
+                        if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+                            return path;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            var candidates = new[]
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Graphviz", "bin", "dot.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Graphviz", "bin", "dot.exe")
+            };
+
+            return candidates.FirstOrDefault(System.IO.File.Exists);
         }
 
         [HttpPost("agregar-dron")]
@@ -340,12 +392,18 @@ namespace Backend.Controllers
 
             var dotPath = SaveDotFile($"mensaje_{GetSafeFileName(nombre)}", dot.ToString());
             var svgPath = TryRenderDotToSvg(dotPath, $"mensaje_{GetSafeFileName(nombre)}.svg");
+            string? svgContent = null;
+            if (!string.IsNullOrEmpty(svgPath) && System.IO.File.Exists(svgPath))
+            {
+                svgContent = System.IO.File.ReadAllText(svgPath);
+            }
 
             return Ok(new
             {
                 dotCode = dot.ToString(),
                 dotFile = dotPath,
-                svgFile = svgPath
+                svgFile = svgPath,
+                svgContent = svgContent
             });
         }
 
@@ -358,12 +416,18 @@ namespace Backend.Controllers
             var dotCode = GenerarCodigoDOT();
             var dotPath = SaveDotFile("graphviz_general", dotCode);
             var svgPath = TryRenderDotToSvg(dotPath, "graphviz_general.svg");
+            string? svgContent = null;
+            if (!string.IsNullOrEmpty(svgPath) && System.IO.File.Exists(svgPath))
+            {
+                svgContent = System.IO.File.ReadAllText(svgPath);
+            }
 
             return Ok(new
             {
                 dotCode = dotCode,
                 dotFile = dotPath,
                 svgFile = svgPath,
+                svgContent = svgContent,
                 estadisticas = new
                 {
                     totalDrones = _reader.listaDrones.Contar(),
