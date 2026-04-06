@@ -1,0 +1,14 @@
+digraph Instrucciones {
+  rankdir=LR;
+  node [shape=box, style=rounded, color=darkblue, fontsize=12];
+  graph [bgcolor=white];
+  "D200_7" [label="D200 @ 7m"];
+  "D199_6" [label="D199 @ 6m"];
+  "D200_7" -> "D199_6";
+  "D198_5" [label="D198 @ 5m"];
+  "D199_6" -> "D198_5";
+  "D197_4" [label="D197 @ 4m"];
+  "D198_5" -> "D197_4";
+  "D196_3" [label="D196 @ 3m"];
+  "D197_4" -> "D196_3";
+}
