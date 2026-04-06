@@ -407,5 +407,4 @@ digraph Drones {
   "DRON197" -> "DRON198" [style=dashed, color=gray];
   "DRON198" -> "DRON199" [style=dashed, color=gray];
   "DRON199" -> "DRON200" [style=dashed, color=gray];
-  "DRON200" -> "julio cesar palomero" [style=dashed, color=gray];
 }

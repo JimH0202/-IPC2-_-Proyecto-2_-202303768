@@ -41,14 +41,57 @@ REM Iniciar Backend en background
 echo.
 echo [3/5] Iniciando Backend en background...
 cd /d "!backendPath!"
-start "", /D "!backendPath!" dotnet run --project Backend.csproj
+start "Backend" /D "!backendPath!" cmd /c "dotnet run --project Backend.csproj"
 
-timeout /t 3 /nobreak >nul
+echo [3/5] Esperando a que el backend escuche en http://localhost:5000 ...
+set "backendReady=0"
+for /L %%i in (1,1,15) do (
+    powershell -NoProfile -Command "if (Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }"
+    if !errorlevel! equ 0 (
+        set "backendReady=1"
+        goto backend_ready
+    )
+    timeout /t 1 /nobreak >nul
+)
+
+:backend_ready
+if "!backendReady!" equ "1" (
+    echo Backend disponible en http://localhost:5000
+) else (
+    echo ERROR: el backend no se inició en http://localhost:5000
+    echo Revisa el proyecto Backend o inicia Backend manualmente.
+)
+
+REM Iniciar Backend en background
+echo.
+echo [3/5] Iniciando Backend en background...
+cd /d "!backendPath!"
+start "Backend" /D "!backendPath!" cmd /c "dotnet run --project Backend.csproj"
+
+echo [3/5] Esperando a que el backend escuche en http://localhost:5000 ...
+set "backendReady=0"
+for /L %%i in (1,1,15) do (
+    powershell -NoProfile -Command "if (Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }"
+    if !errorlevel! equ 0 (
+        set "backendReady=1"
+        goto backend_ready
+    )
+    timeout /t 1 /nobreak >nul
+)
+
+:backend_ready
+if "!backendReady!" equ "1" (
+    echo Backend disponible en http://localhost:5000
+) else (
+    echo ERROR: el backend no se inició en http://localhost:5000
+    echo Revisa el proyecto Backend o inicia Backend manualmente.
+)
 
 REM Iniciar Frontend en foreground
 echo [4/5] Iniciando Frontend...
 cd /d "!frontendPath!"
-dotnet run --project Frontend.csproj
+dotnet run --project Frontend.csproj --urls http://localhost:5001
+
 
 echo.
 echo [5/5] Limpiando procesos...
