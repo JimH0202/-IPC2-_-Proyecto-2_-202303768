@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <listaDrones>
+        <dron>Dron01</dron>
+        <dron>Dron02</dron>
+        <dron>Dron03</dron>
+        <dron>Dron04</dron>
+        <dron>Dron05</dron>
+        <dron>Dron06</dron>
+    </listaDrones>
+
+    <listaSistemasDrones>
+        <sistemaDrones nombre="SistemaDificil">
+        <alturaMaxima>10</alturaMaxima>
+        <cantidadDrones>6</cantidadDrones>
+        <contenido>
+            <dron>Dron01</dron>
+            <alturas>
+            <altura valor="1">A</altura>
+            <altura valor="2">D</altura>
+            <altura valor="3">E</altura>
+            <altura valor="4">N</altura>
+            <altura valor="5">O</altura>
+            <altura valor="6">R</altura>
+            <altura valor="7">S</altura>
+            <altura valor="8">T</altura>
+            <altura valor="9">Y</altura>
+            <altura valor="10">Z</altura>
+            </alturas>
+        </contenido>
+
+        <contenido>
+            <dron>Dron02</dron>
+            <alturas>
+            <altura valor="1">B</altura>
+            <altura valor="2">C</altura>
+            <altura valor="3">F</altura>
+            <altura valor="4">G</altura>
+            <altura valor="5">K</altura>
+            <altura valor="6">L</altura>
+            <altura valor="7">N</altura>
+            <altura valor="8">O</altura>
+            <altura valor="9">P</altura>
+            <altura valor="10">Q</altura>
+            </alturas>
+        </contenido>
+
+        <contenido>
+            <dron>Dron03</dron>
+            <alturas>
+            <altura valor="1">E</altura>
+            <altura valor="2">F</altura>
+            <altura valor="3">G</altura>
+            <altura valor="4">H</altura>
+            <altura valor="5">I</altura>
+            <altura valor="6">J</altura>
+            <altura valor="7">M</altura>
+            <altura valor="8">N</altura>
+            <altura valor="9">U</altura>
+            <altura valor="10">X</altura>
+            </alturas>
+        </contenido>
+
+        <contenido>
+            <dron>Dron04</dron>
+            <alturas>
+            <altura valor="1">L</altura>
+            <altura valor="2">O</altura>
+            <altura valor="3">R</altura>
+            <altura valor="4">U</altura>
+            <altura valor="5">X</altura>
+            <altura valor="6">Z</altura>
+            <altura valor="7">D</altura>
+            <altura valor="8">G</altura>
+            <altura valor="9">J</altura>
+            <altura valor="10">W</altura>
+            </alturas>
+        </contenido>
+
+        <contenido>
+            <dron>Dron05</dron>
+            <alturas>
+            <altura valor="1">K</altura>
+            <altura valor="2">N</altura>
+            <altura valor="3">Q</altura>
+            <altura valor="4">T</altura>
+            <altura valor="5">W</altura>
+            <altura valor="6">A</altura>
+            <altura valor="7">C</altura>
+            <altura valor="8">F</altura>
+            <altura valor="9">I</altura>
+            <altura valor="10">V</altura>
+            </alturas>
+        </contenido>
+
+        <contenido>
+            <dron>Dron06</dron>
+            <alturas>
+            <altura valor="1">J</altura>
+            <altura valor="2">M</altura>
+            <altura valor="3">P</altura>
+            <altura valor="4">S</altura>
+            <altura valor="5">V</altura>
+            <altura valor="6">Y</altura>
+            <altura valor="7">B</altura>
+            <altura valor="8">E</altura>
+            <altura valor="9">H</altura>
+            <altura valor="10">K</altura>
+            </alturas>
+        </contenido>
+        </sistemaDrones>
+    </listaSistemasDrones>
+
+    <listaMensajes>
+        <Mensaje nombre="MensajeDragon">
+        <sistemaDrones>SistemaDificil</sistemaDrones>
+        <instrucciones>
+            <instruccion dron="Dron01">2</instruccion>
+            <instruccion dron="Dron01">6</instruccion>
+            <instruccion dron="Dron01">1</instruccion>
+            <instruccion dron="Dron02">4</instruccion>
+            <instruccion dron="Dron02">8</instruccion>
+            <instruccion dron="Dron02">7</instruccion>
+        </instrucciones>
+        </Mensaje>
+        <Mensaje nombre="MensajeTormenta">
+        <sistemaDrones>SistemaDificil</sistemaDrones>
+        <instrucciones>
+            <instruccion dron="Dron01">8</instruccion>
+            <instruccion dron="Dron01">5</instruccion>
+            <instruccion dron="Dron01">6</instruccion>
+            <instruccion dron="Dron03">7</instruccion>
+            <instruccion dron="Dron01">3</instruccion>
+            <instruccion dron="Dron02">7</instruccion>
+            <instruccion dron="Dron01">8</instruccion>
+            <instruccion dron="Dron05">6</instruccion>
+        </instrucciones>
+    </Mensaje>
+    </listaMensajes> 
+</config>

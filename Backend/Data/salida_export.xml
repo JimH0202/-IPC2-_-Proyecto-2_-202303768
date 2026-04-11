@@ -1,0 +1,32 @@
+<respuesta>
+  <listaMensajes>
+    <msg nombre="MensajeTormenta">
+      <sistemaDrones>SistemaDificil</sistemaDrones>
+      <tiempoOptimo>1000</tiempoOptimo>
+      <msgRecibido>ATNEMROT</msgRecibido>
+      <instrucciones>
+        <instruccion dron="Dron05">6</instruccion>
+        <instruccion dron="Dron01">8</instruccion>
+        <instruccion dron="Dron02">7</instruccion>
+        <instruccion dron="Dron01">3</instruccion>
+        <instruccion dron="Dron03">7</instruccion>
+        <instruccion dron="Dron01">6</instruccion>
+        <instruccion dron="Dron01">5</instruccion>
+        <instruccion dron="Dron01">8</instruccion>
+      </instrucciones>
+    </msg>
+    <msg nombre="MensajeDragon">
+      <sistemaDrones>SistemaDificil</sistemaDrones>
+      <tiempoOptimo>6</tiempoOptimo>
+      <msgRecibido>NOGARD</msgRecibido>
+      <instrucciones>
+        <instruccion dron="Dron02">7</instruccion>
+        <instruccion dron="Dron02">8</instruccion>
+        <instruccion dron="Dron02">4</instruccion>
+        <instruccion dron="Dron01">1</instruccion>
+        <instruccion dron="Dron01">6</instruccion>
+        <instruccion dron="Dron01">2</instruccion>
+      </instrucciones>
+    </msg>
+  </listaMensajes>
+</respuesta>

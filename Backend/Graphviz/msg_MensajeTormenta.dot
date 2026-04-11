@@ -1,0 +1,20 @@
+digraph Instrucciones {
+  rankdir=LR;
+  node [shape=box, style=rounded, color=darkblue, fontsize=12];
+  graph [bgcolor=white];
+  "Dron01_8" [label="Dron01 @ 8m\n(T)"];
+  "Dron01_5" [label="Dron01 @ 5m\n(O)"];
+  "Dron01_8" -> "Dron01_5";
+  "Dron01_6" [label="Dron01 @ 6m\n(R)"];
+  "Dron01_5" -> "Dron01_6";
+  "Dron03_7" [label="Dron03 @ 7m\n(M)"];
+  "Dron01_6" -> "Dron03_7";
+  "Dron01_3" [label="Dron01 @ 3m\n(E)"];
+  "Dron03_7" -> "Dron01_3";
+  "Dron02_7" [label="Dron02 @ 7m\n(N)"];
+  "Dron01_3" -> "Dron02_7";
+  "Dron01_8" [label="Dron01 @ 8m\n(T)"];
+  "Dron02_7" -> "Dron01_8";
+  "Dron05_6" [label="Dron05 @ 6m\n(A)"];
+  "Dron01_8" -> "Dron05_6";
+}

@@ -3,10 +3,20 @@ digraph Drones {
   node [shape=box, style=rounded, fontsize=11];
   graph [bgcolor=lightblue];
   subgraph cluster_0 {
-    label="SistemaPrincipal";
+    label="SistemaDificil";
     style=filled;
     color=lightgrey;
     node [style=filled, fillcolor=white, color=darkblue];
-    "D001";
+    "Dron01";
+    "Dron02";
+    "Dron03";
+    "Dron04";
+    "Dron05";
+    "Dron06";
   }
+  "Dron01" -> "Dron02" [style=dashed, color=gray];
+  "Dron02" -> "Dron03" [style=dashed, color=gray];
+  "Dron03" -> "Dron04" [style=dashed, color=gray];
+  "Dron04" -> "Dron05" [style=dashed, color=gray];
+  "Dron05" -> "Dron06" [style=dashed, color=gray];
 }

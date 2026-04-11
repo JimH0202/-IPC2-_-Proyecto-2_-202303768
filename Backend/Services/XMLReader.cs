@@ -19,6 +19,11 @@ namespace Backend.Services
             XmlDocument doc = new XmlDocument();
             doc.Load(ruta);
 
+            // Ajustar para diferentes formatos de root
+            XmlNode? root = doc.DocumentElement;
+            if (root == null || (root.Name != "configuracion" && root.Name != "config"))
+                return;
+
             LeerDrones(doc);
             LeerSistemas(doc);
             LeerMensajes(doc);

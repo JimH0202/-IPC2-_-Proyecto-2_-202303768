@@ -21,7 +21,7 @@ namespace Backend.Services
 
             int tiempo = 0;
 
-            while (!activas.TodasCompletadas())
+            while (!activas.TodasCompletadas() && tiempo < 1000) // límite para evitar loop infinito
             {
                 Nodo? act = activas.GetCabeza();
 

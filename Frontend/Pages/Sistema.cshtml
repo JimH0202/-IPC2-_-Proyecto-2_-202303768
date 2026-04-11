@@ -619,12 +619,19 @@
             .then(r => r.json())
             .then(data => {
                 document.getElementById('uploadLoading').style.display = 'none';
-                if (data.mensaje) {
-                    showAlert(data.mensaje, 'success');
+                if (data.msg) {
+                    showAlert(data.msg, 'success');
                     document.getElementById('uploadStats').style.display = 'block';
                     document.getElementById('dronesStat').textContent = data.drones;
                     document.getElementById('sistemasStat').textContent = data.sistemas;
-                    document.getElementById('mensajesStat').textContent = data.mensajes;
+                    document.getElementById('mensajesStat').textContent = data.msgs;
+                    // Actualizar automáticamente las listas después de cargar XML
+                    console.log('Llamando loadDrones');
+                    loadDrones();
+                    console.log('Llamando loadSistemas');
+                    loadSistemas();
+                    console.log('Llamando loadMensajes');
+                    loadMensajes();
                 } else {
                     showAlert(data.error || 'Error al cargar XML', 'error');
                 }
@@ -672,9 +679,11 @@
         }
 
         function loadMensajes() {
+            console.log('Cargando mensajes...');
             fetch(`${API_BASE}/mensajes`)
                 .then(r => r.json())
                 .then(data => {
+                    console.log('Mensajes recibidos:', data);
                     if (Array.isArray(data)) {
                         const select = document.getElementById('mensajeSelect');
                         select.innerHTML = '<option value="">Selecciona un mensaje...</option>';
@@ -688,11 +697,15 @@
 
                         document.getElementById('mensajesList').innerHTML = html;
                         document.getElementById('mensajeInfo').style.display = 'none';
+                        console.log('Mensajes cargados en UI');
                     } else {
                         showAlert(data.error || 'Error', 'error');
                     }
                 })
-                .catch(err => showAlert('Error: ' + err.message, 'error'));
+                .catch(err => {
+                    console.error('Error cargando mensajes:', err);
+                    showAlert('Error: ' + err.message, 'error');
+                });
         }
 
         function showMessageDetail(nombre) {
@@ -702,7 +715,7 @@
                 return;
             }
 
-            fetch(`${API_BASE}/mensaje/${encodeURIComponent(decodedName)}`)
+            fetch(`${API_BASE}/msg/${encodeURIComponent(decodedName)}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.error) {
@@ -725,7 +738,7 @@
         }
 
         function loadMessageGraph(nombre) {
-            fetch(`${API_BASE}/mensaje/${encodeURIComponent(nombre)}/graphviz`)
+            fetch(`${API_BASE}/msg/${encodeURIComponent(nombre)}/graphviz`)
                 .then(r => r.json())
                 .then(data => {
                     const codeContainer = document.getElementById('mensajeGraphDotCode');

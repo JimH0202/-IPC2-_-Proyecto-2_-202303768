@@ -41,7 +41,7 @@ REM Iniciar Backend en background
 echo.
 echo [3/5] Iniciando Backend en background...
 cd /d "!backendPath!"
-start "Backend" /D "!backendPath!" cmd /c "dotnet run --project Backend.csproj"
+start "Backend" /D "!backendPath!" cmd /c "set ASPNETCORE_ENVIRONMENT=Development && dotnet run --project Backend.csproj"
 
 echo [3/5] Esperando a que el backend escuche en http://localhost:5000 ...
 set "backendReady=0"
@@ -66,7 +66,7 @@ REM Iniciar Backend en background
 echo.
 echo [3/5] Iniciando Backend en background...
 cd /d "!backendPath!"
-start "Backend" /D "!backendPath!" cmd /c "dotnet run --project Backend.csproj"
+start "Backend" /D "!backendPath!" cmd /c "set ASPNETCORE_ENVIRONMENT=Development && dotnet run --project Backend.csproj"
 
 echo [3/5] Esperando a que el backend escuche en http://localhost:5000 ...
 set "backendReady=0"

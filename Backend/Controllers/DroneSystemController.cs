@@ -38,12 +38,15 @@ namespace Backend.Controllers
                 _decoder = new DecoderService();
                 _optimizer = new OptimizerService();
 
+                // Log para verificar carga
+                Console.WriteLine($"XML cargado: {_reader.listaMensajes.Contar()} msgs, {_reader.listaSistemas.Contar()} sistemas");
+
                 return Ok(new
                 {
                     drones = _reader.listaDrones.Contar(),
                     sistemas = _reader.listaSistemas.Contar(),
-                    mensajes = _reader.listaMensajes.Contar(),
-                    mensaje = "XML cargado exitosamente"
+                    msgs = _reader.listaMensajes.Contar(),
+                    msg = "XML cargado exitosamente"
                 });
             }
             catch (Exception ex)
@@ -61,10 +64,10 @@ namespace Backend.Controllers
 
             return Ok(new
             {
-                mensaje = "Sistema inicializado. Carga un archivo XML para continuar.",
+                msg = "Sistema inicializado. Carga un archivo XML para continuar.",
                 drones = 0,
                 sistemas = 0,
-                mensajes = 0
+                msgs = 0
             });
         }
 
@@ -207,7 +210,7 @@ namespace Backend.Controllers
             return Ok(new
             {
                 nombre = request.Nombre,
-                mensaje = "Dron agregado correctamente"
+                msg = "Dron agregado correctamente"
             });
         }
 
@@ -297,23 +300,16 @@ namespace Backend.Controllers
                 return BadRequest("Primero carga un XML");
 
             var mensajes = _reader.listaMensajes.ObtenerTodos()
-                .OrderBy(m => m.Nombre)
-                .Select(mensaje =>
+                .Select(m => 
                 {
-                    var sistema = _reader.listaSistemas.ObtenerPorNombre(mensaje.SistemaDrones);
-                    var texto = string.Empty;
-                    var tiempoOptimo = 0;
-                    if (sistema != null)
-                    {
-                        texto = _decoder.DecodificarMensaje(mensaje, sistema);
-                        tiempoOptimo = _optimizer.SimularTiempoReal(mensaje);
-                    }
+                    var sistema = _reader.listaSistemas.ObtenerPorNombre(m.SistemaDrones);
+                    var texto = sistema != null ? _decoder.DecodificarMensaje(m, sistema) : "";
                     return new
                     {
-                        nombre = mensaje.Nombre,
-                        sistemaDrones = mensaje.SistemaDrones,
+                        nombre = m.Nombre,
+                        sistemaDrones = m.SistemaDrones,
                         textoDecodificado = texto,
-                        tiempoOptimo = tiempoOptimo
+                        tiempoOptimo = 0
                     };
                 })
                 .ToList();
@@ -321,54 +317,54 @@ namespace Backend.Controllers
             return Ok(mensajes);
         }
 
-        [HttpGet("mensaje/{nombre}")]
-        public IActionResult GetMensaje(string nombre)
+        [HttpGet("msg/{nombre}")]
+        public IActionResult Getmsg(string nombre)
         {
             if (_reader == null || _decoder == null || _optimizer == null)
                 return BadRequest("Primero carga un XML");
 
-            var mensaje = _reader.listaMensajes.ObtenerTodos()
+            var msg = _reader.listaMensajes.ObtenerTodos()
                 .FirstOrDefault(m => m.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase));
 
-            if (mensaje == null)
-                return NotFound("Mensaje no encontrado");
+            if (msg == null)
+                return NotFound("msg no encontrado");
 
-            var sistema = _reader.listaSistemas.ObtenerPorNombre(mensaje.SistemaDrones);
+            var sistema = _reader.listaSistemas.ObtenerPorNombre(msg.SistemaDrones);
             if (sistema == null)
-                return BadRequest("Sistema de drones no encontrado para este mensaje");
+                return BadRequest("Sistema de drones no encontrado para este msg");
 
-            var texto = _decoder.DecodificarMensaje(mensaje, sistema);
-            var tiempoOptimo = _optimizer.SimularTiempoReal(mensaje);
-            var instrucciones = mensaje.Instrucciones.ObtenerTodos()
+            var texto = _decoder.DecodificarMensaje(msg, sistema);
+            var tiempoOptimo = _optimizer.SimularTiempoReal(msg);
+            var instrucciones = msg.Instrucciones.ObtenerTodos()
                 .Select(i => new { dron = i.NombreDron, altura = i.Altura })
                 .ToList();
 
             return Ok(new
             {
-                nombre = mensaje.Nombre,
-                sistemaDrones = mensaje.SistemaDrones,
-                mensajeRecibido = texto,
+                nombre = msg.Nombre,
+                sistemaDrones = msg.SistemaDrones,
+                msgRecibido = texto,
                 tiempoOptimo = tiempoOptimo,
                 instrucciones = instrucciones
             });
         }
 
-        [HttpGet("mensaje/{nombre}/graphviz")]
-        public IActionResult GetMensajeGraphviz(string nombre)
+        [HttpGet("msg/{nombre}/graphviz")]
+        public IActionResult GetmsgGraphviz(string nombre)
         {
             if (_reader == null || _decoder == null || _optimizer == null)
                 return BadRequest("Primero carga un XML");
 
-            var mensaje = _reader.listaMensajes.ObtenerTodos()
+            var msg = _reader.listaMensajes.ObtenerTodos()
                 .FirstOrDefault(m => m.Nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase));
-            if (mensaje == null)
-                return NotFound("Mensaje no encontrado");
+            if (msg == null)
+                return NotFound("msg no encontrado");
 
-            var sistema = _reader.listaSistemas.ObtenerPorNombre(mensaje.SistemaDrones);
+            var sistema = _reader.listaSistemas.ObtenerPorNombre(msg.SistemaDrones);
             if (sistema == null)
-                return BadRequest("Sistema de drones no encontrado para este mensaje");
+                return BadRequest("Sistema de drones no encontrado para este msg");
 
-            var instrucciones = mensaje.Instrucciones.ObtenerTodos().Reverse().ToList();
+            var instrucciones = msg.Instrucciones.ObtenerTodos().Reverse().ToList();
             var dot = new System.Text.StringBuilder();
             dot.AppendLine("digraph Instrucciones {");
             dot.AppendLine("  rankdir=LR;");
@@ -378,8 +374,9 @@ namespace Backend.Controllers
             for (int i = 0; i < instrucciones.Count; i++)
             {
                 var inst = instrucciones[i];
+                var letra = sistema.Tabla.BuscarLetra(inst.NombreDron, inst.Altura) ?? "?";
                 var nodeId = $"{inst.NombreDron}_{inst.Altura}";
-                dot.AppendLine($"  \"{nodeId}\" [label=\"{inst.NombreDron} @ {inst.Altura}m\"];");
+                dot.AppendLine($"  \"{nodeId}\" [label=\"{inst.NombreDron} @ {inst.Altura}m\\n({letra})\"];");
                 if (i > 0)
                 {
                     var prev = instrucciones[i - 1];
@@ -390,8 +387,8 @@ namespace Backend.Controllers
 
             dot.AppendLine("}");
 
-            var dotPath = SaveDotFile($"mensaje_{GetSafeFileName(nombre)}", dot.ToString());
-            var svgPath = TryRenderDotToSvg(dotPath, $"mensaje_{GetSafeFileName(nombre)}.svg");
+            var dotPath = SaveDotFile($"msg_{GetSafeFileName(nombre)}", dot.ToString());
+            var svgPath = TryRenderDotToSvg(dotPath, $"msg_{GetSafeFileName(nombre)}.svg");
             string? svgContent = null;
             if (!string.IsNullOrEmpty(svgPath) && System.IO.File.Exists(svgPath))
             {
@@ -432,7 +429,7 @@ namespace Backend.Controllers
                 {
                     totalDrones = _reader.listaDrones.Contar(),
                     totalSistemas = _reader.listaSistemas.Contar(),
-                    totalMensajes = _reader.listaMensajes.Contar()
+                    totalmsgs = _reader.listaMensajes.Contar()
                 }
             });
         }
@@ -455,58 +452,72 @@ namespace Backend.Controllers
                 var listaMensajes = xml.CreateElement("listaMensajes");
                 root.AppendChild(listaMensajes);
 
-                foreach (var mensaje in _reader.listaMensajes.ObtenerTodos())
+                foreach (var msg in _reader.listaMensajes.ObtenerTodos())
                 {
-                    var sistema = _reader.listaSistemas.ObtenerPorNombre(mensaje.SistemaDrones);
+                    var sistema = _reader.listaSistemas.ObtenerPorNombre(msg.SistemaDrones);
                     if (sistema == null)
                         continue;
 
-                    var texto = _decoder.DecodificarMensaje(mensaje, sistema);
-                    var tiempoOptimo = _optimizer.SimularTiempoReal(mensaje);
-                    var timeline = _optimizer.SimularConTimeline(mensaje);
+                    var texto = _decoder.DecodificarMensaje(msg, sistema);
+                    var tiempoOptimo = _optimizer.SimularTiempoReal(msg);
+                    // var timeline = _optimizer.SimularConTimeline(msg); // Comentado para evitar loop infinito
 
-                    var mensajeElement = xml.CreateElement("mensaje");
-                    mensajeElement.SetAttribute("nombre", mensaje.Nombre);
-                    listaMensajes.AppendChild(mensajeElement);
+                    var msgElement = xml.CreateElement("msg");
+                    msgElement.SetAttribute("nombre", msg.Nombre);
+                    listaMensajes.AppendChild(msgElement);
 
                     var sistemaDrones = xml.CreateElement("sistemaDrones");
                     sistemaDrones.InnerText = sistema.Nombre;
-                    mensajeElement.AppendChild(sistemaDrones);
+                    msgElement.AppendChild(sistemaDrones);
 
                     var tiempoOptimoElement = xml.CreateElement("tiempoOptimo");
                     tiempoOptimoElement.InnerText = tiempoOptimo.ToString();
-                    mensajeElement.AppendChild(tiempoOptimoElement);
+                    msgElement.AppendChild(tiempoOptimoElement);
 
-                    var mensajeRecibidoElement = xml.CreateElement("mensajeRecibido");
-                    mensajeRecibidoElement.InnerText = texto;
-                    mensajeElement.AppendChild(mensajeRecibidoElement);
+                    var msgRecibidoElement = xml.CreateElement("msgRecibido");
+                    msgRecibidoElement.InnerText = texto;
+                    msgElement.AppendChild(msgRecibidoElement);
 
                     var instruccionesElement = xml.CreateElement("instrucciones");
-                    mensajeElement.AppendChild(instruccionesElement);
+                    msgElement.AppendChild(instruccionesElement);
 
-                    var timelineNode = timeline.GetCabeza();
-                    while (timelineNode != null)
+                    foreach (var inst in msg.Instrucciones.ObtenerTodos())
                     {
-                        var tiempo = (TiempoAccion)timelineNode.Dato!;
-                        var tiempoElement = xml.CreateElement("tiempo");
-                        tiempoElement.SetAttribute("valor", tiempo.Tiempo.ToString());
-
-                        var accionesElement = xml.CreateElement("acciones");
-                        var accionNode = tiempo.Acciones.GetCabeza();
-                        while (accionNode != null)
-                        {
-                            var accion = (Accion)accionNode.Dato!;
-                            var dronElement = xml.CreateElement("dron");
-                            dronElement.SetAttribute("nombre", accion.NombreDron);
-                            dronElement.InnerText = accion.Tipo;
-                            accionesElement.AppendChild(dronElement);
-                            accionNode = accionNode.Siguiente;
-                        }
-
-                        tiempoElement.AppendChild(accionesElement);
-                        instruccionesElement.AppendChild(tiempoElement);
-                        timelineNode = timelineNode.Siguiente;
+                        var instruccionElement = xml.CreateElement("instruccion");
+                        instruccionElement.SetAttribute("dron", inst.NombreDron);
+                        instruccionElement.InnerText = inst.Altura.ToString();
+                        instruccionesElement.AppendChild(instruccionElement);
                     }
+
+                    // if (timeline != null) // Comentado para simplificar
+                    // {
+                    //     var timelineNode = timeline.GetCabeza();
+                    //     while (timelineNode != null)
+                    //     {
+                    //         var tiempo = (TiempoAccion)timelineNode.Dato!;
+                    //         var tiempoElement = xml.CreateElement("tiempo");
+                    //         tiempoElement.SetAttribute("valor", tiempo.Tiempo.ToString());
+
+                    //         var accionesElement = xml.CreateElement("acciones");
+                    //         if (tiempo.Acciones != null)
+                    //         {
+                    //             var accionNode = tiempo.Acciones.GetCabeza();
+                    //             while (accionNode != null)
+                    //             {
+                    //                 var accion = (Accion)accionNode.Dato!;
+                    //                 var dronElement = xml.CreateElement("dron");
+                    //                 dronElement.SetAttribute("nombre", accion.NombreDron);
+                    //                 dronElement.InnerText = accion.Tipo;
+                    //                 accionesElement.AppendChild(dronElement);
+                    //                 accionNode = accionNode.Siguiente;
+                    //             }
+                    //         }
+
+                    //         tiempoElement.AppendChild(accionesElement);
+                    //         instruccionesElement.AppendChild(tiempoElement);
+                    //         timelineNode = timelineNode.Siguiente;
+                    //     }
+                    // }
                 }
 
                 xml.Save(rutaSalida);
@@ -520,7 +531,7 @@ namespace Backend.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error: {ex.Message}");
+                return BadRequest($"Error al exportar XML: {ex.Message}\nStackTrace: {ex.StackTrace}");
             }
         }
 
