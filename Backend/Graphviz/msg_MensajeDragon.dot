@@ -7,10 +7,10 @@ digraph Instrucciones {
   "Dron01_2" -> "Dron01_6";
   "Dron01_1" [label="Dron01 @ 1m\n(A)"];
   "Dron01_6" -> "Dron01_1";
-  "Dron02_4" [label="Dron02 @ 4m\n(G)"];
+  "Dron02_4" [label="Dron02 @ 4m\n(?)"];
   "Dron01_1" -> "Dron02_4";
-  "Dron02_8" [label="Dron02 @ 8m\n(O)"];
+  "Dron02_8" [label="Dron02 @ 8m\n(?)"];
   "Dron02_4" -> "Dron02_8";
-  "Dron02_7" [label="Dron02 @ 7m\n(N)"];
+  "Dron02_7" [label="Dron02 @ 7m\n(?)"];
   "Dron02_8" -> "Dron02_7";
 }

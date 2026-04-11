@@ -1,0 +1,10 @@
+digraph Instrucciones {
+  rankdir=LR;
+  node [shape=box, style=rounded, color=darkblue, fontsize=12];
+  graph [bgcolor=white];
+  "Alpha_5" [label="Alpha @ 5m\n(S)"];
+  "Beta_5" [label="Beta @ 5m\n(O)"];
+  "Alpha_5" -> "Beta_5";
+  "Gamma_5" [label="Gamma @ 5m\n(L)"];
+  "Beta_5" -> "Gamma_5";
+}

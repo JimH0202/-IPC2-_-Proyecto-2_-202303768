@@ -47,7 +47,7 @@
 <title>Dron02_4</title>
 <path fill="none" stroke="darkblue" d="M436,-36.5C436,-36.5 375,-36.5 375,-36.5 369,-36.5 363,-30.5 363,-24.5 363,-24.5 363,-12 363,-12 363,-6 369,0 375,0 375,0 436,0 436,0 442,0 448,-6 448,-12 448,-12 448,-24.5 448,-24.5 448,-30.5 442,-36.5 436,-36.5"/>
 <text xml:space="preserve" text-anchor="middle" x="405.5" y="-21.1" font-family="Times New Roman,serif" font-size="12.00">Dron02 @ 4m</text>
-<text xml:space="preserve" text-anchor="middle" x="405.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(G)</text>
+<text xml:space="preserve" text-anchor="middle" x="405.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(?)</text>
 </g>
 <!-- Dron01_1&#45;&gt;Dron02_4 -->
 <g id="edge3" class="edge">
@@ -60,7 +60,7 @@
 <title>Dron02_8</title>
 <path fill="none" stroke="darkblue" d="M557,-36.5C557,-36.5 496,-36.5 496,-36.5 490,-36.5 484,-30.5 484,-24.5 484,-24.5 484,-12 484,-12 484,-6 490,0 496,0 496,0 557,0 557,0 563,0 569,-6 569,-12 569,-12 569,-24.5 569,-24.5 569,-30.5 563,-36.5 557,-36.5"/>
 <text xml:space="preserve" text-anchor="middle" x="526.5" y="-21.1" font-family="Times New Roman,serif" font-size="12.00">Dron02 @ 8m</text>
-<text xml:space="preserve" text-anchor="middle" x="526.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(O)</text>
+<text xml:space="preserve" text-anchor="middle" x="526.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(?)</text>
 </g>
 <!-- Dron02_4&#45;&gt;Dron02_8 -->
 <g id="edge4" class="edge">
@@ -73,7 +73,7 @@
 <title>Dron02_7</title>
 <path fill="none" stroke="darkblue" d="M678,-36.5C678,-36.5 617,-36.5 617,-36.5 611,-36.5 605,-30.5 605,-24.5 605,-24.5 605,-12 605,-12 605,-6 611,0 617,0 617,0 678,0 678,0 684,0 690,-6 690,-12 690,-12 690,-24.5 690,-24.5 690,-30.5 684,-36.5 678,-36.5"/>
 <text xml:space="preserve" text-anchor="middle" x="647.5" y="-21.1" font-family="Times New Roman,serif" font-size="12.00">Dron02 @ 7m</text>
-<text xml:space="preserve" text-anchor="middle" x="647.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(N)</text>
+<text xml:space="preserve" text-anchor="middle" x="647.5" y="-6.85" font-family="Times New Roman,serif" font-size="12.00">(?)</text>
 </g>
 <!-- Dron02_8&#45;&gt;Dron02_7 -->
 <g id="edge5" class="edge">

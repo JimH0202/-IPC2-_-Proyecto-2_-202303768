@@ -1,0 +1,14 @@
+digraph Instrucciones {
+  rankdir=LR;
+  node [shape=box, style=rounded, color=darkblue, fontsize=12];
+  graph [bgcolor=white];
+  "Alpha_4" [label="Alpha @ 4m\n(A)"];
+  "Beta_4" [label="Beta @ 4m\n(N)"];
+  "Alpha_4" -> "Beta_4";
+  "Gamma_4" [label="Gamma @ 4m\n(I)"];
+  "Beta_4" -> "Gamma_4";
+  "Alpha_3" [label="Alpha @ 3m\n(M)"];
+  "Gamma_4" -> "Alpha_3";
+  "Gamma_2" [label="Gamma @ 2m\n(A)"];
+  "Alpha_3" -> "Gamma_2";
+}

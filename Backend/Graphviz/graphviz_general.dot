@@ -8,11 +8,6 @@ digraph Drones {
     color=lightgrey;
     node [style=filled, fillcolor=white, color=darkblue];
     "Dron01";
-    "Dron02";
-    "Dron03";
-    "Dron04";
-    "Dron05";
-    "Dron06";
   }
   "Dron01" -> "Dron02" [style=dashed, color=gray];
   "Dron02" -> "Dron03" [style=dashed, color=gray];

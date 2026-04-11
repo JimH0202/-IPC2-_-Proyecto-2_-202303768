@@ -727,7 +727,7 @@
                     document.getElementById('mensajeDetalleTexto').innerHTML = `
                         <strong>Mensaje:</strong> ${data.nombre}<br>
                         <strong>Sistema:</strong> ${data.sistemaDrones}<br>
-                        <strong>Mensaje decodificado:</strong> ${data.mensajeRecibido}<br>
+                        <strong>Mensaje decodificado:</strong> ${data.msgRecibido}<br>
                         <strong>Tiempo óptimo:</strong> ${data.tiempoOptimo}s<br>
                         <strong>Instrucciones:</strong> ${data.instrucciones.map(i => `${i.dron}@@${i.altura}m`).join(', ')}
                     `;
